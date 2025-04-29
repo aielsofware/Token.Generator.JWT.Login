@@ -1,0 +1,48 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Company>aiel software</Company>
+    <Authors>Abiel Jesrrel (Relly) Delgado Lee</Authors>
+    <Description>Paquete para generación de Token para login seguro en aplicaciones.</Description>
+    <Copyright>Copyright© aiel software 2025</Copyright>
+    <RepositoryType>git</RepositoryType>
+    <AssemblyVersion>1.0.0.2</AssemblyVersion>
+    <FileVersion>1.0.0.2</FileVersion>
+    <PackageTags>JWT, token, login, generate token, crear token</PackageTags>
+    <PackageProjectUrl>https://www.nuget.org/packages/Token.Generator.JWT.Login</PackageProjectUrl>
+    <PackageReleaseNotes>Version 2.1.2
+
+- Code optimization
+- Add premium method  (paid)
+- Update core with the lasted repositories
+- Modify documentation for a best use
+		</PackageReleaseNotes>
+    <PackageIcon>logoNuget.png</PackageIcon>
+    <RepositoryUrl>https://github.com/aielsofware/Token.Generator.JWT.Login</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <Version>2.1.2</Version>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+    <Title>Token Generator JWT Pro</Title>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\logoNuget.png">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="..\README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+    <None Include="LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.9.0" />
+  </ItemGroup>
+</Project>
