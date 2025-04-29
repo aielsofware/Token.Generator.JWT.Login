@@ -19,7 +19,7 @@ namespace Token.Generator.JWT.Login
     {
         private readonly TimeSpan ExpiryDuration = new TimeSpan(0, 30, 0);
         private const string SecretKey = "qwertyuiopasdfghjklzxcvbnm123456"; // Clave secreta predefinida
-        private const string GitHubKeysUrl = "https://raw.githubusercontent.com/rellytechgame/key_TokenGeneratorJWT/refs/heads/main/key.txt?token=GHSAT0AAAAAADCCPLMUGLVOTBRK623DNKZO2AQYC5A"; // URL con las claves
+        private const string GitHubKeysUrl = "#"; // URL con las claves
 
 
         // Caché para almacenar el uso de tokens por usuario
