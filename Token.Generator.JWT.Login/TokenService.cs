@@ -32,7 +32,24 @@ namespace Token.Generator.JWT.Login
             };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
+
+            int KeySize = IsKeySizeValid(securityKey);
+
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+
+            if (KeySize < 256)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+            }
+            else if (KeySize >= 256 && KeySize < 512)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha384Signature);
+            }
+            else if (KeySize >= 512)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
+            }
+
 
             var tokenDescriptor = new JwtSecurityToken(
                 claims: claims,
@@ -56,7 +73,22 @@ namespace Token.Generator.JWT.Login
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
 
+            int KeySize = IsKeySizeValid(securityKey);
+
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+
+            if (KeySize < 256)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+            }
+            else if (KeySize >= 256 && KeySize < 512)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha384Signature);
+            }
+            else if (KeySize >= 512)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
+            }
 
             var tokenDescriptor = new JwtSecurityToken(issuer, audience, claims,
 
@@ -87,7 +119,23 @@ namespace Token.Generator.JWT.Login
             };
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(SecretKey));
+
+            int KeySize = IsKeySizeValid(securityKey);
+
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+
+            if (KeySize < 256)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+            }
+            else if (KeySize >= 256 && KeySize < 512)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha384Signature);
+            }
+            else if (KeySize >= 512)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha512Signature);
+            }
 
             var expiration = DateTime.Now.Add(TimeSpan.FromDays(30)); // Mayor duración para usuarios premium
             var tokenDescriptor = new JwtSecurityToken(
@@ -150,6 +198,13 @@ namespace Token.Generator.JWT.Login
         public void ClearCache()
         {
             TokenUsageCache.Clear();
+        }
+
+        public static int IsKeySizeValid(SymmetricSecurityKey key)
+        {
+            int KeySize = key.KeySize;
+
+            return KeySize;
         }
 
 

@@ -66,121 +66,140 @@ La librería expone tres métodos principales. Cada uno responde a un nivel de r
 
 ### 1. ✨ BasicToken
 
-- **Duración**: 30 minutos  
-- **Uso**: Sin parámetros extras  
-
-```csharp
-public string GenerateBasicToken()
-{
-    var tokenService = new TokenService();
-    return tokenService.BasicToken();
-}
-```
+- **Duración**: 30 minutos
+- **Requerimientos**:
+  - `secretKey` (string): Clave secreta para firmar el token
+- **Seguridad**:
+  - Firma adaptativa basada en el tamaño de la clave:
+    - < 256 bits: HMAC-SHA256
+    - 256-511 bits: HMAC-SHA384
+    - ≥ 512 bits: HMAC-SHA512
+- **Respuesta**: Token JWT en formato string
 
 ---
 
 ### 2. ⚡ ProToken
 
-- **Incluye**: issuer, audience y clientUsername  
-
-```csharp
-public string GenerateProToken(
-    string issuer,
-    string audience,
-    string clientUsername)
-{
-    var tokenService = new TokenService();
-    return tokenService.ProToken(
-        issuer,
-        audience,
-        clientUsername);
-}
-```
+- **Duración**: 30 minutos
+- **Requerimientos**:
+  - `issuer` (string): Emisor del token
+  - `audience` (string): Audiencia objetivo del token
+  - `clientUsername` (string): Nombre de usuario
+  - `secretKey` (string): Clave secreta para firmar el token
+- **Seguridad**: Mismo sistema adaptativo de firma que BasicToken
+- **Respuesta**: JSON:
+  ```json
+  {
+    "Token": "eyJhbGciOiJS...",
+    "Expiration": "2025-06-09T10:30:00Z"
+  }
+  ```
 
 ---
 
 ### 3. 🌟 PremiumTokenAsync
 
-- **Duración**: 30 días  
-- **Requiere**: clave válida verificada desde repositorio  
-
-```csharp
-public async Task<string> GeneratePremiumTokenAsync(
-    string key,
-    string issuer,
-    string audience,
-    string clientUsername)
-{
-    var tokenService = new TokenService();
-    return await tokenService.PremiumTokenAsync(
-        key,
-        issuer,
-        audience,
-        clientUsername);
-}
-```
+- **Duración**: 30 días
+- **Requerimientos**:
+  - `key` (string): Clave de licencia premium (verificada contra repositorio GitHub)
+  - `issuer` (string): Emisor del token
+  - `audience` (string): Audiencia objetivo del token
+  - `clientUsername` (string): Nombre de usuario
+  - `secretKey` (string): Clave secreta para firmar el token
+- **Características Premium**:
+  - Validación de licencia en tiempo real
+  - Seguimiento de uso de tokens
+  - Claim adicional de usuario premium
+- **Respuesta**: JSON:
+  ```json
+  {
+    "Token": "eyJhbGciOiJS...",
+    "Expiration": "2025-06-09T10:30:00Z",
+    "UsageReport": {
+        "TokensGenerated": 1,
+        "LastUsage": "2025-05-10T10:30:00Z"
+    }
+  }
+  ```
 
 ---
 
 ## 🔄 Ejemplo Completo en ASP.NET Core
 
 ```csharp
-[ApiController]
-[Route("[controller]")]
-public class TokenController : ControllerBase
+var builder = WebApplication.CreateBuilder(args);
+
+// Registra tu servicio de generación de tokens como singleton
+builder.Services.AddSingleton<ITokenService, TokenService>();
+
+var app = builder.Build();
+
+// 🎫 Token Básico
+app.MapGet("/token/basic", () =>
 {
-    private readonly ITokenService _tokenService;
+    string secretKey = "TuClaveSecreta"; // Reemplaza con tu clave secreta
+    var tokenService = new TokenService();
+    var token = tokenService.BasicToken(secretKey);
+    return Results.Ok(new { Token = token });
+})
+.WithName("GetBasicToken")
+.WithOpenApi()
+.WithTags("Tokens");
 
-    public TokenController(ITokenService tokenService)
-    {
-        _tokenService = tokenService;
-    }
+// 🎫 Token Pro
+app.MapGet("/token/pro", () =>
+{
+    string secretKey = "TuClaveSecreta"; // Reemplaza con tu clave secreta
+    string issuer = "TuEmisor"; // Reemplaza con tu emisor
+    string audience = "TuAudiencia"; // Reemplaza con tu audiencia
+    string clientUsername = "NombreDelUsuario"; // Reemplaza con tu nombre de tu usuario
 
-    // 🎫 Token Básico
-    [HttpGet("basic")]
-    public IActionResult GetBasicToken()
-    {
-        var token = _tokenService.BasicToken();
-        return Ok(new { Token = token });
-    }
+    var tokenService = new TokenService();
 
-    // 🎫 Token Pro
-    [HttpGet("pro")]
-    public IActionResult GetProToken(
-        string issuer,
-        string audience,
-        string clientUsername)
-    {
-        var token = _tokenService.ProToken(
-            issuer,
-            audience,
-            clientUsername);
-        return Ok(new { Token = token });
-    }
+    var response = tokenService.ProToken(
+        issuer,
+        audience,
+        clientUsername,
+        secretKey);
+    
+    // El response ya viene en formato JSON
+    return Results.Ok(response);
+})
+.WithName("GetProToken")
+.WithOpenApi()
+.WithTags("Tokens");
 
-    // 🎫 Token Premium
-    [HttpGet("premium")]
-    public async Task<IActionResult> GetPremiumTokenAsync(
-        string key,
-        string issuer,
-        string audience,
-        string clientUsername)
-    {
-        var token = await _tokenService.PremiumTokenAsync(
-            key,
-            issuer,
-            audience,
-            clientUsername);
-        return Ok(new { Token = token });
-    }
-}
+// 🎫 Token Premium
+app.MapGet("/token/premium", async () =>
+{
+    string key = "TuClavePremium"; // Reemplaza con tu clave premium
+    string secretKey = "TuClaveSecreta"; // Reemplaza con tu clave secreta
+    string issuer = "TuEmisor"; // Reemplaza con tu emisor
+    string audience = "TuAudiencia"; // Reemplaza con tu audiencia
+    string clientUsername = "NombreDelUsuario"; // Reemplaza con tu nombre de tu usuario
+
+    var response = await tokenService.PremiumTokenAsync(
+        key,
+        issuer,
+        audience,
+        clientUsername,
+        secretKey);
+    
+    // El response ya viene en formato JSON
+    return Results.Ok(response);
+})
+.WithName("GetPremiumToken")
+.WithOpenApi()
+.WithTags("Tokens");
+
+app.Run();
 ```
 
 ---
 
 ## 📞 Soporte y Contribución
 
-- 🔗 **Repositorio & Portfolio**: Visita mi portfolio para más detalles y ejemplos.  
+- 🔗 **Repositorio & Portfolio**: Visita mi portfolio para más detalles.  
 - 🐛 **Bugs / Requests**: Crea un _issue_ en GitHub o contáctame por email.  
 
 ---
@@ -252,121 +271,141 @@ Three main methods cover basic through premium requirements:
 
 ### 1. ✨ BasicToken
 
-- **TTL**: 30 minutes  
-- **Parameters**: none  
-
-```csharp
-public string GenerateBasicToken()
-{
-    var tokenService = new TokenService();
-    return tokenService.BasicToken();
-}
-```
+- **Duration**: 30 minutes
+- **Requirements**:
+  - `secretKey` (string): Secret key for token signing
+- **Security**:
+  - Adaptive signing based on key size:
+    - < 256 bits: HMAC-SHA256
+    - 256-511 bits: HMAC-SHA384
+    - ≥ 512 bits: HMAC-SHA512
+- **Response**: JWT token as string
 
 ---
 
 ### 2. ⚡ ProToken
 
-- **Includes**: issuer, audience, clientUsername  
-
-```csharp
-public string GenerateProToken(
-    string issuer,
-    string audience,
-    string clientUsername)
-{
-    var tokenService = new TokenService();
-    return tokenService.ProToken(
-        issuer,
-        audience,
-        clientUsername);
-}
-```
+- **Duration**: 30 minutes
+- **Requirements**:
+  - `issuer` (string): Token issuer
+  - `audience` (string): Target audience
+  - `clientUsername` (string): Username
+  - `secretKey` (string): Secret key for token signing
+- **Security**: Same adaptive signing system as BasicToken
+- **Response**: JSON with:
+  ```json
+  {
+    "Token": "eyJhbGciOiJS...",
+    "Expiration": "2025-06-09T10:30:00Z"
+  }
+  ```
 
 ---
 
 ### 3. 🌟 PremiumTokenAsync
 
-- **TTL**: 30 days  
-- **Requires**: valid key checked against a GitHub-hosted list  
-
-```csharp
-public async Task<string> GeneratePremiumTokenAsync(
-    string key,
-    string issuer,
-    string audience,
-    string clientUsername)
-{
-    var tokenService = new TokenService();
-    return await tokenService.PremiumTokenAsync(
-        key,
-        issuer,
-        audience,
-        clientUsername);
-}
-```
+- **Duration**: 30 days
+- **Requirements**:
+  - `key` (string): Premium license key (verified against GitHub repository)
+  - `issuer` (string): Token issuer
+  - `audience` (string): Target audience
+  - `clientUsername` (string): Username
+  - `secretKey` (string): Secret key for token signing
+- **Premium Features**:
+  - Real-time license validation
+  - Token usage tracking
+  - Additional premium user claim
+- **Response**: JSON with:
+  ```json
+  {
+    "Token": "eyJhbGciOiJS...",
+    "Expiration": "2025-06-09T10:30:00Z",
+    "UsageReport": {
+        "TokensGenerated": 1,
+        "LastUsage": "2025-05-10T10:30:00Z"
+    }
+  }
+  ```
 
 ---
 
 ## 🔄 Full ASP.NET Core Example
 
 ```csharp
-[ApiController]
-[Route("[controller]")]
-public class TokenController : ControllerBase
+var builder = WebApplication.CreateBuilder(args);
+
+// Register token service as singleton
+builder.Services.AddSingleton<ITokenService, TokenService>();
+
+var app = builder.Build();
+
+// 🎫 Basic Token
+app.MapGet("/token/basic", () =>
 {
-    private readonly ITokenService _tokenService;
+    string secretKey = "YourSecretKey"; // Replace with your secret key
+    var tokenService = new TokenService();
+    var token = tokenService.BasicToken(secretKey);
+    return Results.Ok(new { Token = token });
+})
+.WithName("GetBasicToken")
+.WithOpenApi()
+.WithTags("Tokens");
 
-    public TokenController(ITokenService tokenService)
-    {
-        _tokenService = tokenService;
-    }
+// 🎫 Pro Token
+app.MapGet("/token/pro", () =>
+{
+    string secretKey = "YourSecretKey"; // Replace with your secret key
+    string issuer = "YourIssuer"; // Replace with your issuer
+    string audience = "YourAudience"; // Replace with your audience
+    string clientUsername = "UserName"; // Replace with your username
 
-    // 🎫 Basic Token
-    [HttpGet("basic")]
-    public IActionResult GetBasicToken()
-    {
-        var token = _tokenService.BasicToken();
-        return Ok(new { Token = token });
-    }
+    var tokenService = new TokenService();
 
-    // 🎫 Pro Token
-    [HttpGet("pro")]
-    public IActionResult GetProToken(
-        string issuer,
-        string audience,
-        string clientUsername)
-    {
-        var token = _tokenService.ProToken(
-            issuer,
-            audience,
-            clientUsername);
-        return Ok(new { Token = token });
-    }
+    var response = tokenService.ProToken(
+        issuer,
+        audience,
+        clientUsername,
+        secretKey);
+    
+    // Response already comes in JSON format
+    return Results.Ok(response);
+})
+.WithName("GetProToken")
+.WithOpenApi()
+.WithTags("Tokens");
 
-    // 🎫 Premium Token
-    [HttpGet("premium")]
-    public async Task<IActionResult> GetPremiumTokenAsync(
-        string key,
-        string issuer,
-        string audience,
-        string clientUsername)
-    {
-        var token = await _tokenService.PremiumTokenAsync(
-            key,
-            issuer,
-            audience,
-            clientUsername);
-        return Ok(new { Token = token });
-    }
-}
+// 🎫 Premium Token
+app.MapGet("/token/premium", async () =>
+{
+    string key = "YourPremiumKey"; // Replace with your premium key
+    string secretKey = "YourSecretKey"; // Replace with your secret key
+    string issuer = "YourIssuer"; // Replace with your issuer
+    string audience = "YourAudience"; // Replace with your audience
+    string clientUsername = "UserName"; // Replace with your username
+
+    var response = await tokenService.PremiumTokenAsync(
+        key,
+        issuer,
+        audience,
+        clientUsername,
+        secretKey);
+    
+    // Response already comes in JSON format
+    return Results.Ok(response);
+})
+.WithName("GetPremiumToken")
+.WithOpenApi()
+.WithTags("Tokens");
+
+app.Run();
+
 ```
 
 ---
 
 ## 📞 Support & Contributions
 
-- 🔗 **Repo & Portfolio**: Check my portfolio for more details and examples.  
+- 🔗 **Repo & Portfolio**: Check my portfolio for more details.  
 - 🐛 **Issues / Feature Requests**: Open an issue on GitHub or reach out via email.  
 
 > Thanks for choosing the JWT Token Generation Library! 🙌 Happy coding, and keep your applications secure! 💻✨
