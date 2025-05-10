@@ -39,9 +39,13 @@ namespace Token.Generator.JWT.Login
 
             if (KeySize < 256)
             {
-                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+                return $"Your secret key size need must greater than {SecretKey}";
             }
-            else if (KeySize >= 256 && KeySize < 512)
+            else if (KeySize >= 256 && KeySize < 383)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha384Signature);
+            }
+            else if (KeySize >= 383 && KeySize < 512)
             {
                 credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha384Signature);
             }
@@ -79,9 +83,13 @@ namespace Token.Generator.JWT.Login
 
             if (KeySize < 256)
             {
-                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+                return $"Your secret key size need must greater than {SecretKey}";
             }
-            else if (KeySize >= 256 && KeySize < 512)
+            else if (KeySize >= 256 && KeySize < 383)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha384Signature);
+            }
+            else if (KeySize >= 383 && KeySize < 512)
             {
                 credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha384Signature);
             }
@@ -126,9 +134,13 @@ namespace Token.Generator.JWT.Login
 
             if (KeySize < 256)
             {
-                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
+                return $"Your secret key size need must greater than {SecretKey}";
             }
-            else if (KeySize >= 256 && KeySize < 512)
+            else if (KeySize >= 256 && KeySize < 383)
+            {
+                credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha384Signature);
+            }
+            else if (KeySize >= 383 && KeySize < 512)
             {
                 credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha384Signature);
             }

@@ -13,7 +13,7 @@
     <FileVersion>1.0.0.2</FileVersion>
     <PackageTags>JWT, token, login, generate token, crear token</PackageTags>
     <PackageProjectUrl>https://relly-portfolio.vercel.app</PackageProjectUrl>
-    <PackageReleaseNotes>Version 2.1.5
+    <PackageReleaseNotes>Version 2.1.6
 
 - Add new detals about use
 - More description about this package
@@ -21,7 +21,7 @@
     <PackageIcon>logoNuget.png</PackageIcon>
     <RepositoryUrl>https://github.com/aielsofware/Token.Generator.JWT.Login</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>2.1.5</Version>
+    <Version>2.1.6</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Title>Token Generator JWT Pro</Title>
