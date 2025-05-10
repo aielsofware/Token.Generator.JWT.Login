@@ -4,26 +4,24 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <Company>aiel software</Company>
+    <Company>voxel</Company>
     <Authors>Abiel Jesrrel (Relly) Delgado Lee</Authors>
-    <Description>Paquete para generación de Token para login seguro en aplicaciones.</Description>
-    <Copyright>Copyright© aiel software 2025</Copyright>
+    <Description>Token generator package for create a professional token for your software and you have an best security, Token Generator JWT have three methods for the use, between they are: BasicToken, ProToken and PremiumToken (paid).</Description>
+    <Copyright>Copyright© voxel 2025</Copyright>
     <RepositoryType>git</RepositoryType>
     <AssemblyVersion>1.0.0.2</AssemblyVersion>
     <FileVersion>1.0.0.2</FileVersion>
     <PackageTags>JWT, token, login, generate token, crear token</PackageTags>
-    <PackageProjectUrl>https://www.nuget.org/packages/Token.Generator.JWT.Login</PackageProjectUrl>
-    <PackageReleaseNotes>Version 2.1.2
+    <PackageProjectUrl>https://relly-portfolio.vercel.app</PackageProjectUrl>
+    <PackageReleaseNotes>Version 2.1.3
 
-- Code optimization
-- Add premium method  (paid)
-- Update core with the lasted repositories
-- Modify documentation for a best use
+- Include license
+- More description about this package
 		</PackageReleaseNotes>
     <PackageIcon>logoNuget.png</PackageIcon>
     <RepositoryUrl>https://github.com/aielsofware/Token.Generator.JWT.Login</RepositoryUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <Version>2.1.2</Version>
+    <Version>2.1.4</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
     <Title>Token Generator JWT Pro</Title>

@@ -10,22 +10,21 @@ namespace Token.Generator.JWT.Login
     // Token Generator
     public interface ITokenService
     {
-        string BasicToken();
-        string ProToken(string issuer, string audience, string clientUsername);
-        Task<string> PremiumTokenAsync(string key, string issuer, string audience, string clientUsername);
+        string BasicToken(string SecretKey);
+        string ProToken(string issuer, string audience, string clientUsername, string SecretKey);
+        Task<string> PremiumTokenAsync(string key, string issuer, string audience, string clientUsername, string SecretKey);
     }
 
     public class TokenService : ITokenService
     {
         private readonly TimeSpan ExpiryDuration = new TimeSpan(0, 30, 0);
-        private const string SecretKey = "qwertyuiopasdfghjklzxcvbnm123456"; // Clave secreta predefinida
-        private const string GitHubKeysUrl = "#"; // URL con las claves
+        private const string GitHubKeysUrl = "https://raw.githubusercontent.com/rellytechgame/key_TokenGeneratorJWT/refs/heads/main/key.txt?token=GHSAT0AAAAAADCCPLMUGLVOTBRK623DNKZO2AQYC5A"; // URL con las claves
 
 
         // Caché para almacenar el uso de tokens por usuario
         private static readonly Dictionary<string, TokenUsage> TokenUsageCache = new Dictionary<string, TokenUsage>();
 
-        public string BasicToken()
+        public string BasicToken(string SecretKey)
         {
             var claims = new[]
             {
@@ -46,7 +45,7 @@ namespace Token.Generator.JWT.Login
             return token;
         }
 
-        public string ProToken(string issuer, string audience, string clientUsername)
+        public string ProToken(string issuer, string audience, string clientUsername, string SecretKey)
         {
             var claims = new[]
             {
@@ -72,7 +71,7 @@ namespace Token.Generator.JWT.Login
             return response;
         }
 
-        public async Task<string> PremiumTokenAsync(string key, string issuer, string audience, string clientUsername)
+        public async Task<string> PremiumTokenAsync(string key, string issuer, string audience, string clientUsername, string SecretKey)
         {
             if (!await ValidateKeyAsync(key))
             {
